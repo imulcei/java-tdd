@@ -1,14 +1,11 @@
 package fr.afpa.converter.tool;
 
-import java.math.BigInteger;
-import java.util.regex.Pattern;
-
 /**
  * Classe utilitaire permettant de passer des nombres d'une base à l'autre.
  * 
  * Base suportées:
  * - binaire
- * - décimale 
+ * - décimale
  * - hexadécimale
  */
 public final class ConverterTool {
@@ -16,7 +13,8 @@ public final class ConverterTool {
     /**
      * Constructeur privé pour cacher celui déclaré par défaut en public.
      */
-    private ConverterTool() {}
+    private ConverterTool() {
+    }
 
     /**
      * Convertit un nombre binaire (représentation sous forme de chaîne de
@@ -26,7 +24,11 @@ public final class ConverterTool {
      * @return Répresentation décimale du nombre, -1 si la conversion est impossible
      */
     public static int binaryToDecimal(String binary) {
-        return -1;
+        try {
+            return Integer.parseInt(binary, 2);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     /**
@@ -36,7 +38,16 @@ public final class ConverterTool {
      * @return Répresentation binaire du nombre
      */
     public static String decimalToBinary(int decimal) {
-        return null;
+        String result = "";
+        if (decimal == 0 || decimal < 0) {
+            return "0";
+        }
+        while (decimal > 0) {
+            int modulo = decimal % 2;
+            result = modulo + result;
+            decimal = decimal / 2;
+        }
+        return result;
     }
 
     /**
@@ -47,7 +58,12 @@ public final class ConverterTool {
      * @return Répresentation héxadécimale du nombre
      */
     public static String binaryToHexadecimal(String binary) {
-        return null;
+        try {
+            int decimal = Integer.parseInt(binary, 2);
+            return Integer.toHexString(decimal);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     /**
@@ -57,7 +73,9 @@ public final class ConverterTool {
      * @return Répresentation binaire du nombre
      */
     public static String decimalToHexadecimal(int decimal) {
-        return null;
+        String result = decimalToBinary(decimal);
+        result = binaryToHexadecimal(result);
+        return result;
     }
 
     /**
@@ -67,11 +85,17 @@ public final class ConverterTool {
      * @return Répresentation binaire du nombre
      */
     public static int hexadecimalToDecimal(String hexadecimal) {
-        return -1;
+        try {
+            return Integer.parseInt(hexadecimal, 16);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     public static String hexadecimalToBinary(String hex) {
-        return null;
+        int dec = hexadecimalToDecimal(hex);
+        String result = decimalToBinary(dec);
+        return result;
     }
 
     /**
@@ -83,19 +107,26 @@ public final class ConverterTool {
      *         hexadécimaux, faux sinon
      */
     public static boolean checkIfHexadecimal(String toCheck) {
-        // TODO vérification par l'utilisation d'une REGEX
-        return false;
+        try {
+            Long.parseLong(toCheck, 16);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     /**
      * Vérifie si une chaîne de caractères en paramètre représente un nombre entier
      * 
      * @param toCheck Chaîne à vérifier
-     * @return true si la chaîne passée en paramètre contient des symboles
-     *         hexadécimaux, faux sinon
+     * @return true si la chaîne passée en paramètre est un nombre entier, faux
+     *         sinon
      */
     public static boolean checkIfDecimal(String toCheck) {
-        // TODO vérification par l'utilisation d'une REGEX
-        return false;
+        if (toCheck.matches("^[0-9]+$")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
